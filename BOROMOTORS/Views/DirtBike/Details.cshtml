@@ -1,0 +1,33 @@
+﻿@model BOROMOTORS.Models.DirtBike
+
+@{
+    ViewData["Title"] = Model.Model;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.Model - Details</title>
+    <link rel="stylesheet" href="~/css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="navbar">
+            <h1 class="logo">DirtXtreme</h1>
+        </div>
+    </header>
+        
+    <section class="dirtbike-details">
+        <img src="@Model.ImageUrl" alt="@Model.Model" width="500" height="300">
+        <h2>@Model.Model</h2>
+        <p><strong>Manufacturer:</strong> @Model.Manufacturer</p>
+        <p><strong>Price:</strong> $@Model.Price</p>
+        <p><strong>Horsepower:</strong> @Model.Horsepower HP</p>
+        <a href="/DirtBike/Index">Back to List</a>
+    </section>
+
+</body>
+</html>
