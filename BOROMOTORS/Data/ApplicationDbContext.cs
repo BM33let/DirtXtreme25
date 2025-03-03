@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using BOROMOTORS.Data;
 
 namespace BOROMOTORS.Data
 {
@@ -42,5 +43,6 @@ namespace BOROMOTORS.Data
                 .HasIndex(c => c.Email)
                 .IsUnique();
         }
+        public DbSet<BOROMOTORS.Data.Review> Review { get; set; } = default!;
     }
 }

@@ -1,0 +1,52 @@
+﻿@model IEnumerable<BOROMOTORS.Models.DirtBike>
+@{
+    ViewData["Title"] = "Dirt Bikes";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="navbar">
+            <h1 class="logo">DirtXtreme</h1>
+        </div>
+    </header>
+
+    <form method="GET" action="/DirtBike/Index">
+        <input type="text" name="searchQuery" placeholder="Search by model or manufacturer..." required>
+        <button type="submit">Search</button>
+    </form>
+
+    <a asp-action="Create">Create New</a>
+
+
+    <section class="dirtbikes-list">
+        @foreach (var item in Model)
+        {
+            <div class="dirtbike">
+                <img src="@item.ImageUrl" alt="@item.Manufacturer @item.Model" width="500" height="300">
+                <div class="dirtbike-description">
+                    <h4>@item.Manufacturer @item.Model</h4>
+                    <p>Price: $@item.Price</p>
+                    <p>Horsepower: @item.Horsepower</p>
+                    <p>Top Speed: @item.TopSpeed</p>
+                    <p>Weight: @item.Weight</p>
+                    <p>Description: @item.Description</p><br />
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </div>
+            </div>
+        }
+
+    </section>
+
+</body>
+</html>
