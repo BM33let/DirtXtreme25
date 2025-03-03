@@ -1,0 +1,26 @@
+﻿@model IEnumerable<BOROMOTORS.Data.Review>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<section id="reviews">
+    <h2>Мнения на клиенти</h2>
+@foreach (var item in Model) {
+    <div class="review-card">
+        <img src="@item.ImageUrl" alt="@item.Author" class="profile-image">
+        <div class="review-content">
+            <p class="review-text">"@item.Description"</p>
+            <strong>@item.Author</strong>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+        </div>
+    </div>
+}
+    </section>
