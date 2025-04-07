@@ -13,5 +13,6 @@
             public string? TopSpeed { get; set; }
             public int? Horsepower { get; set; }
             public int? Weight { get; set; }
-        }
+            public int Year { get; set; }
     }
+}

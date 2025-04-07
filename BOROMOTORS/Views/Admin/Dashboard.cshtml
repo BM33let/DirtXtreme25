@@ -1,0 +1,150 @@
+﻿@model BOROMOTORS.Models.DashboardViewModel
+
+<h2 style="text-align: center; color: #ff4500;">📊 Dashboard</h2>
+
+<div class="dashboard-cards">
+    <div class="dashboard-card">📦 Общо мотори: <strong>@Model.TotalBikes</strong></div>
+    <div class="dashboard-card">💰 Средна цена: <strong>@Model.AveragePrice лв.</strong></div>
+    <div class="dashboard-card">🛵 Най-евтин: <strong>@Model.CheapestBike лв.</strong></div>
+    <div class="dashboard-card">🏍️ Топ марка: <strong>@Model.TopManufacturer</strong></div>
+</div>
+
+<hr />
+<h3 style="text-align:center; color: #ff4500;">📈 Разпределение по марки</h3>
+
+<div style="text-align:center; margin-bottom: 10px;">
+    <button onclick="renderChart('pie')" class="btn btn-sm btn-outline-warning">🥧 Pie Chart</button>
+    <button onclick="renderChart('bar')" class="btn btn-sm btn-outline-info">📊 Bar Chart</button>
+</div>
+
+<canvas id="brandsChart" width="400" height="200" style="margin: 0 auto; background-color: #1c1c1c; border-radius: 10px;"></canvas>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    let chartInstance;
+
+    async function fetchData() {
+        const res = await fetch('/Admin/ChartData');
+        return await res.json();
+    }
+
+    function renderChart(type) {
+        fetchData().then(data => {
+            const ctx = document.getElementById('brandsChart').getContext('2d');
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: data.map(d => d.label),
+                    datasets: [{
+                        label: 'Брой мотори',
+                        data: data.map(d => d.value),
+                        backgroundColor: [
+                            '#ff4500', '#ff8800', '#ffaa00', '#00cc99', '#3399ff', '#9966ff'
+                        ],
+                        borderColor: '#111',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { labels: { color: '#fff' } }
+                    },
+                    scales: type === 'bar' ? {
+                        x: { ticks: { color: '#fff' } },
+                        y: { ticks: { color: '#fff' }, beginAtZero: true }
+                    } : {}
+                }
+            });
+        });
+    }
+
+    async function renderYearChart() {
+        const res = await fetch('/Admin/ChartByYear');
+        const data = await res.json();
+
+        const ctx = document.getElementById('yearChart').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.label),
+                datasets: [{
+                    label: 'Мотори по година',
+                    data: data.map(d => d.value),
+                    backgroundColor: '#00cc99',
+                    borderColor: '#1c1c1c',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { labels: { color: '#fff' } }
+                },
+                scales: {
+                    x: { ticks: { color: '#fff' } },
+                    y: { ticks: { color: '#fff' }, beginAtZero: true }
+                }
+            }
+        });
+    }
+
+</script>
+
+</script>
+
+<div class="dashboard-card">👥 Регистрирани потребители: <strong>@Model.TotalUsers</strong></div>
+
+<hr />
+<h3 style="text-align:center; color: #ff4500;">📅 Мотори по година</h3>
+<canvas id="yearChart" width="400" height="200" style="margin: 0 auto; background-color: #1c1c1c; border-radius: 10px;"></canvas>
+
+
+
+<script>
+    // Зарежда графика по година
+    async function renderYearChart() {
+        const res = await fetch('/Admin/ChartByYear');
+        const data = await res.json();
+
+        const ctx = document.getElementById('yearChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.label),
+                datasets: [{
+                    label: 'Мотори по година',
+                    data: data.map(d => d.value),
+                    backgroundColor: '#00cc99',
+                    borderColor: '#1c1c1c',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { labels: { color: '#fff' } }
+                },
+                scales: {
+                    x: { ticks: { color: '#fff' } },
+                    y: { ticks: { color: '#fff' }, beginAtZero: true }
+                }
+            }
+        });
+    }
+
+    // Викай и двете
+    window.onload = () => {
+        renderChart('pie');
+        renderYearChart();
+    };
+</script>
+

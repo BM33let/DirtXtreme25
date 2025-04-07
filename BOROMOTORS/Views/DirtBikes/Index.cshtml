@@ -1,52 +1,49 @@
 ﻿@model IEnumerable<BOROMOTORS.Models.DirtBike>
 @{
-    ViewData["Title"] = "Dirt Bikes";
+    ViewData["Title"] = "Нашите мотори";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/css/style.css">
-</head>
-<body>
+<h1>@ViewData["Title"]</h1>
 
-    <header>
-        <div class="navbar">
-            <h1 class="logo">DirtXtreme</h1>
-        </div>
-    </header>
+<form method="get" asp-action="Index">
+    <!-- Търсене по модел или марка -->
+    <input type="text" name="searchString" placeholder="Търси по модел или марка" value="@ViewData["CurrentFilter"]" />
 
-    <form method="GET" action="/DirtBike/Index">
-        <input type="text" name="searchQuery" placeholder="Search by model or manufacturer..." required>
-        <button type="submit">Search</button>
-    </form>
-
-    <a asp-action="Create">Create New</a>
-
-
-    <section class="dirtbikes-list">
-        @foreach (var item in Model)
+    <!-- Dropdown за марка -->
+    <select name="manufacturer">
+        <option value="">Всички марки</option>
+        @foreach (var manufacturer in ViewBag.Manufacturers)
         {
-            <div class="dirtbike">
-                <img src="@item.ImageUrl" alt="@item.Manufacturer @item.Model" width="500" height="300">
-                <div class="dirtbike-description">
-                    <h4>@item.Manufacturer @item.Model</h4>
-                    <p>Price: $@item.Price</p>
-                    <p>Horsepower: @item.Horsepower</p>
-                    <p>Top Speed: @item.TopSpeed</p>
-                    <p>Weight: @item.Weight</p>
-                    <p>Description: @item.Description</p><br />
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </div>
-            </div>
+            <option value="@manufacturer" @(manufacturer == ViewData["Manufacturer"] ? "selected" : "")>@manufacturer</option>
         }
+    </select>
 
-    </section>
+    <!-- Филтър по минимална и максимална цена -->
+    <input type="number" name="minPrice" placeholder="Минимална цена" value="@ViewData["MinPrice"]" />
+    <input type="number" name="maxPrice" placeholder="Максимална цена" value="@ViewData["MaxPrice"]" />
 
-</body>
-</html>
+    <button type="submit">Приложи филтри</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Модел</th>
+            <th>Марка</th>
+            <th>Цена</th>
+            <th>Описание</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var bike in Model)
+        {
+            <tr>
+                <td>@bike.Model</td>
+                <td>@bike.Manufacturer</td>
+                <td>@bike.Price</td>
+                <td>@bike.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

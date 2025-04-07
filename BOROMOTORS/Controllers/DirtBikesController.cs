@@ -21,21 +21,55 @@ namespace BOROMOTORS.Controllers
         }
 
         // GET: DirtBikes
-        public async Task<IActionResult> Index(string searchQuery)
+        public async Task<IActionResult> Index(string searchString, string sortOrder, int? minPrice, int? maxPrice, string manufacturer)
         {
-            var dirtBikes = await _context.DirtBikes.ToListAsync();
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["PriceSortParm"] = string.IsNullOrEmpty(sortOrder) ? "price_desc" : "price_asc";
 
-            if (!string.IsNullOrEmpty(searchQuery))
+            var query = _context.DirtBikes.AsQueryable();
+
+            // Филтриране по модел и производител
+            if (!string.IsNullOrEmpty(searchString))
             {
-                searchQuery = searchQuery.ToLower();
-
-                dirtBikes = await _context.DirtBikes
-                    .Where(d => d.Model.ToLower().Contains(searchQuery) || d.Manufacturer.ToLower().Contains(searchQuery))
-                    .ToListAsync();
+                query = query.Where(b => b.Model.Contains(searchString) || b.Manufacturer.Contains(searchString));
             }
 
-            return View(dirtBikes);
+            // Филтриране по марка
+            if (!string.IsNullOrEmpty(manufacturer))
+            {
+                query = query.Where(b => b.Manufacturer == manufacturer);
+            }
+
+            // Филтриране по цена
+            if (minPrice.HasValue)
+            {
+                query = query.Where(b => b.Price >= minPrice.Value);
+            }
+
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(b => b.Price <= maxPrice.Value);
+            }
+
+            // Сортиране по цена
+            switch (sortOrder)
+            {
+                case "price_desc":
+                    query = query.OrderByDescending(b => b.Price);
+                    break;
+                case "price_asc":
+                    query = query.OrderBy(b => b.Price);
+                    break;
+            }
+
+            // Подаване на марки за dropdown менюто
+            ViewBag.Manufacturers = await _context.DirtBikes.Select(b => b.Manufacturer).Distinct().ToListAsync();
+
+            return View(await query.ToListAsync());
         }
+
+
+
 
         // GET: DirtBikes/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -63,12 +97,10 @@ namespace BOROMOTORS.Controllers
         }
 
         // POST: DirtBikes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Model,Manufacturer,Price,Stock,Description,ImageUrl,VideoUrl,TopSpeed,Horsepower,Weight")] DirtBike dirtBike)
+        public async Task<IActionResult> Create([Bind("Id,Model,Manufacturer,Price,Stock,Description,ImageUrl,VideoUrl,TopSpeed,Horsepower,Weight,Year")] DirtBike dirtBike)
         {
             if (ModelState.IsValid)
             {
@@ -97,13 +129,10 @@ namespace BOROMOTORS.Controllers
         }
 
         // POST: DirtBikes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int? id, [Bind("Id,Model,Manufacturer,Price,Stock,Description,ImageUrl,VideoUrl,TopSpeed,Horsepower,Weight")] DirtBike dirtBike)
+        public async Task<IActionResult> Edit(int? id, [Bind("Id,Model,Manufacturer,Price,Stock,Description,ImageUrl,VideoUrl,TopSpeed,Horsepower,Weight,Year")] DirtBike dirtBike)
         {
             if (id != dirtBike.Id)
             {

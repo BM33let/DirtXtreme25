@@ -1,4 +1,8 @@
-﻿@model IEnumerable<BOROMOTORS.Data.Review>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@model IEnumerable<BOROMOTORS.Data.Review>
 
 @{
     ViewData["Title"] = "Index";
@@ -17,9 +21,14 @@
         <div class="review-content">
             <p class="review-text">"@item.Description"</p>
             <strong>@item.Author</strong>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                {
+                   
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Create">Create</a>
+                }
+
         </div>
     </div>
 }

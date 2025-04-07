@@ -44,5 +44,6 @@ namespace BOROMOTORS.Data
                 .IsUnique();
         }
         public DbSet<BOROMOTORS.Data.Review> Review { get; set; } = default!;
+        public object DirtBike { get; internal set; }
     }
 }
